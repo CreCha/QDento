@@ -9,11 +9,23 @@
 #include "Presenter/CalendarPresenter.h"
 #include "View/Theme.h"
 #include "View/uiComponents/CalendarWidget.h"
+#include "View/uiComponents/BigPushButton.h"
+#include "Greek/SmsReminderDialog.h"
 
 CalendarView::CalendarView(QWidget* parent)
     : QWidget(parent)
 {
     ui.setupUi(this);
+
+    // Κουμπί υπενθυμίσεων SMS δίπλα στα κουμπιά πλοήγησης
+    auto smsButton = new BigPushButton(ui.topFrame);
+    smsButton->setText(QString::fromUtf8("Υπενθυμίσεις SMS"));
+    smsButton->setToolTip(QString::fromUtf8("Αποστολή υπενθυμίσεων για τα ραντεβού της επόμενης ημέρας"));
+    ui.horizontalLayout->insertWidget(4, smsButton);
+    connect(smsButton, &QPushButton::clicked, this, [this] {
+        SmsReminderDialog d(this);
+        d.exec();
+    });
 
     calendarWidget = new CalendarWidget();
     calendarWidget->setWindowFlag(Qt::WindowType::Popup);

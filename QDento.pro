@@ -4,6 +4,9 @@ QT += core gui widgets network networkauth
 
 CONFIG += c++20
 
+# Ελληνικά κείμενα στον κώδικα (UTF-8)
+win32-msvc*: QMAKE_CXXFLAGS += /utf-8
+
 DEFINES -= QT_DISABLE_DEPRECATED_BEFORE=0x060000
 
 INCLUDEPATH += $$PWD/src
@@ -23,6 +26,11 @@ TRANSLATIONS +=
     translations/Translation_bg_BG.ts
 
 HEADERS += \
+    src/Greek/PatientExtra.h \
+    src/Greek/PatientExtraDialog.h \
+    src/Greek/PatientCardPrinter.h \
+    src/Greek/SmsReminderDialog.h \
+    src/View/CustomImages.h \
     include/json/json-forwards.h \
     include/json/json.h \
     include/sqLite3/sqlite3.h \
@@ -234,6 +242,10 @@ HEADERS += \
     src/View/uiComponents/ToothButton.h
 
 SOURCES += \
+    src/Greek/PatientExtra.cpp \
+    src/Greek/PatientExtraDialog.cpp \
+    src/Greek/PatientCardPrinter.cpp \
+    src/Greek/SmsReminderDialog.cpp \
     include/json/jsoncpp.cpp \
     include/sqLite3/sqlite3.c \
     src/Database/Database.cpp \

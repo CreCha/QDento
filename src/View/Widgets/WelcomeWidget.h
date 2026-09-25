@@ -2,6 +2,8 @@
 
 #include <QWidget>
 #include "ui_WelcomeWidget.h"
+#include <QPixmap>
+#include <QPaintEvent>
 
 class MainPresenter;
 
@@ -13,6 +15,10 @@ public:
 	WelcomeWidget(QWidget *parent = nullptr);
 	~WelcomeWidget();
 
+protected:
+	void paintEvent(QPaintEvent* e) override;
+
 private:
 	Ui::WelcomeWidgetClass ui;
+	QPixmap m_background;
 };

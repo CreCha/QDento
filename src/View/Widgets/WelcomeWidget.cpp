@@ -1,8 +1,11 @@
-#include "WelcomeWidget.h"
+﻿#include "WelcomeWidget.h"
 #include "View/Theme.h"
 #include "Presenter/MainPresenter.h"
 #include <QDesktopServices>
 #include <QDate>
+#include <QPainter>
+#include <QPainterPath>
+#include "View/CustomImages.h"
 
 #include "View/Widgets/AboutDialog.h"
 
@@ -11,11 +14,29 @@ WelcomeWidget::WelcomeWidget(QWidget *parent)
 {
 	ui.setupUi(this);
 
+	// Τα παραστατικά εκδίδονται από άλλο πρόγραμμα
+	ui.invoiceButton->hide();
+	ui.label_3->hide();
+
     auto date = Date::currentDate();
 
-    ui.cornerLabel->setPixmap(QPixmap(":/icons/qDento.png"));
+    // Λογότυπο: του ιατρείου αν υπάρχει, αλλιώς του QDento
+    if (!CustomImages::customLogo().isNull()) {
+        ui.cornerLabel->setMinimumSize(200, 200);
+        ui.cornerLabel->setMaximumSize(200, 200);
+    }
+    ui.cornerLabel->setPixmap(CustomImages::logo());
 
-    setStyleSheet("color: " + Theme::colorToString(Theme::fontTurquoise) + "; background-color:" + Theme::colorToString(Theme::background));
+    m_background = CustomImages::background();
+
+    if (m_background.isNull()) {
+        setStyleSheet("color: " + Theme::colorToString(Theme::fontTurquoise) + "; background-color:" + Theme::colorToString(Theme::background));
+    }
+    else {
+        // Με φωτογραφία φόντου: τα στοιχεία γίνονται διάφανα και το φόντο ζωγραφίζεται στο paintEvent
+        setAttribute(Qt::WA_StyledBackground, false);
+        setStyleSheet("color: " + Theme::colorToString(Theme::fontTurquoise) + "; background: transparent;");
+    }
 
     ui.ambButton->setIcon(QIcon(":/icons/icon_sheet.png"));
     ui.perioButton->setIcon(QIcon(":/icons/icon_periosheet.png"));
@@ -40,3 +61,32 @@ WelcomeWidget::WelcomeWidget(QWidget *parent)
 
 WelcomeWidget::~WelcomeWidget()
 {}
+
+void WelcomeWidget::paintEvent(QPaintEvent* e)
+{
+    if (m_background.isNull()) {
+        QWidget::paintEvent(e);
+        return;
+    }
+
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform);
+    painter.setRenderHint(QPainter::Antialiasing);
+
+    // Φωτογραφία σε όλη την επιφάνεια, με διατήρηση αναλογιών (γεμίζει και κόβει τα άκρα)
+    QPixmap scaled = m_background.scaled(size(), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+    QPoint topLeft((width() - scaled.width()) / 2, (height() - scaled.height()) / 2);
+    painter.drawPixmap(topLeft, scaled);
+
+    // Ημιδιάφανο λευκό πάνελ πίσω από τα κουμπιά, για να διαβάζονται οι τίτλοι
+    QRect panel = ui.frame->geometry().adjusted(-15, -15, 15, 15);
+    QPainterPath path;
+    path.addRoundedRect(panel, Theme::radius, Theme::radius);
+    painter.fillPath(path, QColor(255, 255, 255, 215));
+
+    // Το ίδιο πίσω από το λογότυπο
+    QRect logoRect = ui.cornerLabel->geometry().adjusted(-10, -10, 10, 10);
+    QPainterPath logoPath;
+    logoPath.addRoundedRect(logoRect, Theme::radius, Theme::radius);
+    painter.fillPath(logoPath, QColor(255, 255, 255, 215));
+}

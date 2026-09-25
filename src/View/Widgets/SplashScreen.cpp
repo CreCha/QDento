@@ -2,12 +2,13 @@
 
 #include <QSplashScreen>
 #include <QApplication>
+#include "View/CustomImages.h"
 
 QSplashScreen* s_splash{nullptr};
 
 void SplashScreen::createAndShow()
 {
-	s_splash = new QSplashScreen(QPixmap(":/other/splash.png"));
+	s_splash = new QSplashScreen(CustomImages::splash());
     s_splash->show();
     s_splash->showMessage("Loading QDento, please wait...", Qt::AlignLeft | Qt::AlignBottom, Qt::darkGray);
     QApplication::instance()->processEvents();

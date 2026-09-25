@@ -1,4 +1,4 @@
-#include "QDento.h"
+﻿#include "QDento.h"
 
 #include <QAction>
 #include <QMenu>
@@ -35,6 +35,9 @@ QDento::QDento(QWidget* parent)
     : QMainWindow(parent)
 {
     ui.setupUi(this);
+
+    // Τα παραστατικά εκδίδονται από άλλο πρόγραμμα
+    ui.invoiceButton->hide();
 
     setWindowState(Qt::WindowMaximized);
 
