@@ -1,0 +1,51 @@
+name: Build QDento (Windows)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Qt 6.8.3 (MSVC 2022)
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.8.3'
+          host: 'windows'
+          target: 'desktop'
+          arch: 'win64_msvc2022_64'
+          modules: 'qtnetworkauth'
+          cache: true
+
+      - name: Setup MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Unpack include.zip (sqlite3, jsoncpp)
+        shell: pwsh
+        run: Expand-Archive -Path include.zip -DestinationPath . -Force
+
+      - name: Build
+        shell: cmd
+        run: |
+          set CL=/MP
+          mkdir build
+          cd build
+          qmake ..\QDento.pro CONFIG+=release
+          nmake
+
+      - name: Package
+        shell: cmd
+        run: |
+          mkdir dist
+          copy build\release\QDento.exe dist\
+          windeployqt --release --no-translations dist\QDento.exe
+          if exist translations\Translation_el_GR.qm copy translations\Translation_el_GR.qm dist\
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: QDento-windows
+          path: dist
