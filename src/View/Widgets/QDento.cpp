@@ -38,6 +38,7 @@ QDento::QDento(QWidget* parent)
 
     // Τα παραστατικά εκδίδονται από άλλο πρόγραμμα
     ui.invoiceButton->hide();
+    ui.donateButton->hide();
 
     setWindowState(Qt::WindowMaximized);
 

@@ -18,6 +18,25 @@ WelcomeWidget::WelcomeWidget(QWidget *parent)
 	ui.invoiceButton->hide();
 	ui.label_3->hide();
 
+	// Χωρίς κουμπί δωρεάς
+	ui.donateButton->hide();
+	ui.label_8->hide();
+
+	// Αναδιάταξη: 4 κουμπιά πάνω, 3 κεντραρισμένα κάτω, χωρίς κενά
+	auto place = [](QWidget* tile, QWidget* label, int x, int y) {
+		tile->move(x, y);
+		label->move(x, y + 110);
+	};
+	place(ui.ambButton, ui.label, 20, 20);
+	place(ui.perioButton, ui.label_2, 140, 20);
+	place(ui.calendar, ui.label_5, 260, 20);
+	place(ui.browser, ui.label_4, 380, 20);
+	place(ui.notifButton, ui.label_6, 80, 190);
+	place(ui.settingsButton, ui.label_7, 200, 190);
+	place(ui.aboutButton, ui.label_9, 320, 190);
+	ui.frame->setMinimumHeight(360);
+	ui.frame->setMaximumHeight(360);
+
     auto date = Date::currentDate();
 
     // Λογότυπο: του ιατρείου αν υπάρχει, αλλιώς του QDento
